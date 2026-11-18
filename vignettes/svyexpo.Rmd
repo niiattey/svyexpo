@@ -9,13 +9,19 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
-# Run the model chunks only if INLA is installed and its binary runs here.
+library(svyexpo)
+# Run the model chunks only if INLA is installed and a small model fits here.
 has_inla <- requireNamespace("INLA", quietly = TRUE) &&
   requireNamespace("sn", quietly = TRUE) &&
   tryCatch({
-    suppressWarnings(INLA::inla(y ~ 1, data = data.frame(y = c(1, 2, 3, 4)),
-                                family = "gaussian", num.threads = "1:1",
-                                silent = 2L))
+    s <- svy_simulate(n_side = 3, clusters_per_area = 2,
+                      records_per_cluster = 5, seed = 7)
+    d <- s$survey
+    d$area_id <- s$boundaries$area_id[sf::st_nearest_feature(
+      sf::st_as_sf(d, coords = c("lon", "lat"), crs = 4326), s$boundaries)]
+    suppressMessages(suppressWarnings(
+      svy_fit_bym2(d, y ~ age_months, svy_adjacency(s$boundaries),
+                   num.threads = "1:1", silent = 2L)))
     TRUE
   }, error = function(e) FALSE)
 has_ggplot <- requireNamespace("ggplot2", quietly = TRUE)
