@@ -9,8 +9,15 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+# Run the model chunks only if INLA is installed and its binary runs here.
 has_inla <- requireNamespace("INLA", quietly = TRUE) &&
-  requireNamespace("sn", quietly = TRUE)
+  requireNamespace("sn", quietly = TRUE) &&
+  tryCatch({
+    suppressWarnings(INLA::inla(y ~ 1, data = data.frame(y = c(1, 2, 3, 4)),
+                                family = "gaussian", num.threads = "1:1",
+                                silent = 2L))
+    TRUE
+  }, error = function(e) FALSE)
 has_ggplot <- requireNamespace("ggplot2", quietly = TRUE)
 ```
 

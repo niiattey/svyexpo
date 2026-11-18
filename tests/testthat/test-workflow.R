@@ -29,8 +29,7 @@ test_that("modules 1-4 chain together on simulated data", {
 })
 
 test_that("BYM2 model fits and returns area and SVC summaries", {
-  skip_if_not_installed("INLA")
-  skip_if_not_installed("sn")
+  skip_if_no_inla()
   sim <- svy_simulate(n_side = 4, clusters_per_area = 4, records_per_cluster = 10)
   pts <- svy_standardize(sim$survey, "id", "cluster", "lon", "lat",
                          date = "date", urban = "urban")
