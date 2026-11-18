@@ -1,4 +1,4 @@
-# svyexpo
+# svyexpo <img src="man/figures/logo.png" align="right" height="139" alt="svyexpo hex sticker: a grid of squares forming a disc, with edge squares shrinking" />
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/niiattey/svyexpo/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/niiattey/svyexpo/actions/workflows/R-CMD-check.yaml)

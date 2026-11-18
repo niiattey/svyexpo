@@ -1,6 +1,9 @@
 url: https://niiattey.github.io/svyexpo/
 template:
   bootstrap: 5
+  bslib:
+    primary: "#0F3D4C"
+    link-color: "#0F3D4C"
 reference:
   - title: "1. Ingest"
     contents: [svy_standardize, svy_from_dhs, cmc_to_date, svy_schema]
