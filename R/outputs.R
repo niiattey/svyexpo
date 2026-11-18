@@ -68,6 +68,7 @@ svy_area_effects <- function(fit, exceed = 0, exponentiate = FALSE) {
 svy_svc_effects <- function(fit, var, n_samples = 1000, exceed = 0,
                             exponentiate = FALSE, seed = 0L) {
   check_inla()
+  check_sn()
   check_class(fit, "svy_fit")
   if (!var %in% fit$svc) {
     cli::cli_abort("{.val {var}} was not fitted as a spatially varying coefficient.")

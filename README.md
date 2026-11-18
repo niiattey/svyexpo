@@ -24,6 +24,9 @@ remotes::install_github("niiattey/svyexpo")
 install.packages("INLA",
   repos = c(getOption("repos"), INLA = "https://inla.r-inla-download.org/R/stable"),
   dep = TRUE)
+
+# Needed for spatially varying coefficients (posterior sampling):
+install.packages("sn")
 ```
 
 ## Workflow

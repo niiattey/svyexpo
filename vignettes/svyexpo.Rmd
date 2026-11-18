@@ -9,7 +9,8 @@ vignette: >
 
 ```{r setup, include = FALSE}
 knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
-has_inla <- requireNamespace("INLA", quietly = TRUE)
+has_inla <- requireNamespace("INLA", quietly = TRUE) &&
+  requireNamespace("sn", quietly = TRUE)
 has_ggplot <- requireNamespace("ggplot2", quietly = TRUE)
 ```
 

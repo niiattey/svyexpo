@@ -32,6 +32,7 @@ Suggests:
     INLA,
     knitr,
     rmarkdown,
+    sn,
     testthat (>= 3.0.0),
     withr
 Additional_repositories: https://inla.r-inla-download.org/R/stable

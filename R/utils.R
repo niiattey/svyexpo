@@ -38,6 +38,18 @@ check_inla <- function() {
   invisible(TRUE)
 }
 
+# INLA's posterior sampling (used for spatially varying coefficients) needs
+# the sn package, which INLA lists only as a suggestion.
+check_sn <- function() {
+  if (!requireNamespace("sn", quietly = TRUE)) {
+    cli::cli_abort(c(
+      "The {.pkg sn} package is required to sample from the posterior.",
+      "i" = "Install it with {.code install.packages(\"sn\")}."
+    ))
+  }
+  invisible(TRUE)
+}
+
 # Open a raster lazily. Character inputs (local paths or GDAL virtual paths
 # such as "/vsicurl/https://...") are opened without reading pixel values.
 as_spatraster <- function(x, arg = "raster") {
