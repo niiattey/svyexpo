@@ -27,22 +27,28 @@ jobs:
       - uses: r-lib/actions/setup-r@v2
         with:
           use-public-rspm: true
-          extra-repositories: https://inla.r-inla-download.org/R/stable
+      # INLA is installed in its own step (below) with retries, because its
+      # package index on Linux sometimes returns an invalid response and that
+      # breaks the dependency resolver for every package.
       - uses: r-lib/actions/setup-r-dependencies@v2
-        id: deps
-        continue-on-error: true
         with:
-          extra-packages: any::pkgdown, local::.
+          dependencies: '"hard"'
+          extra-packages: >-
+            any::pkgdown, local::., any::knitr, any::rmarkdown,
+            any::ggplot2, any::withr, any::sn
           needs: website
-      - name: Wait before retrying (package index was unavailable)
-        if: steps.deps.outcome == 'failure'
-        run: sleep 60
-        shell: bash
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        if: steps.deps.outcome == 'failure'
-        with:
-          extra-packages: any::pkgdown, local::.
-          needs: website
+      - name: Install INLA (with retries)
+        run: |
+          repos <- c(INLA = "https://inla.r-inla-download.org/R/stable",
+                     CRAN = "https://cloud.r-project.org")
+          for (i in 1:5) {
+            try(install.packages("INLA", repos = repos))
+            if (requireNamespace("INLA", quietly = TRUE)) break
+            message("INLA install attempt ", i, " failed; retrying in 30 s")
+            Sys.sleep(30)
+          }
+          stopifnot(requireNamespace("INLA", quietly = TRUE))
+        shell: Rscript {0}
       - name: Build site
         run: pkgdown::build_site_github_pages(new_process = FALSE, install = FALSE)
         shell: Rscript {0}

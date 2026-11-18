@@ -1,5 +1,13 @@
-# Runs R CMD check on push and pull request. INLA comes from its own
-# repository (extra-repositories) so the model tests run where it installs.
+# Runs R CMD check on push and pull request.
+#
+# INLA is not on CRAN. It is installed in its own step with retries instead of
+# through the dependency resolver, because INLA's package index on Linux
+# sometimes returns an invalid response and that breaks resolution of every
+# other package.
+#
+# On Linux and macOS, INLA's program fails on graph models inside R CMD check
+# (see README, "Known issue"), so the package skips model fitting there. The
+# model-tests workflow runs those tests outside R CMD check.
 on:
   push:
     branches: [main, master]
@@ -31,22 +39,24 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
           use-public-rspm: true
-          extra-repositories: https://inla.r-inla-download.org/R/stable
       - uses: r-lib/actions/setup-r-dependencies@v2
-        id: deps
-        continue-on-error: true
         with:
-          extra-packages: any::rcmdcheck
-          needs: check
-      - name: Wait before retrying (package index was unavailable)
-        if: steps.deps.outcome == 'failure'
-        run: sleep 60
-        shell: bash
-      - uses: r-lib/actions/setup-r-dependencies@v2
-        if: steps.deps.outcome == 'failure'
-        with:
-          extra-packages: any::rcmdcheck
-          needs: check
+          dependencies: '"hard"'
+          extra-packages: >-
+            any::rcmdcheck, any::testthat, any::knitr, any::rmarkdown,
+            any::ggplot2, any::withr, any::sn
+      - name: Install INLA (with retries)
+        run: |
+          repos <- c(INLA = "https://inla.r-inla-download.org/R/stable",
+                     CRAN = "https://cloud.r-project.org")
+          for (i in 1:5) {
+            try(install.packages("INLA", repos = repos))
+            if (requireNamespace("INLA", quietly = TRUE)) break
+            message("INLA install attempt ", i, " failed; retrying in 30 s")
+            Sys.sleep(30)
+          }
+          stopifnot(requireNamespace("INLA", quietly = TRUE))
+        shell: Rscript {0}
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
