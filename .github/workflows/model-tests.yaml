@@ -1,7 +1,7 @@
 # Runs the test suite directly (outside R CMD check) with INLA required, so
-# the BYM2 / spatially varying coefficient code is always exercised on Linux.
-# On some runners INLA's binary fails on graph models under R CMD check; this
-# job shows whether the model code itself works.
+# the BYM2 / spatially varying coefficient code is always exercised on Linux
+# and macOS. On some runners INLA's binary fails on graph models under
+# R CMD check; this job shows whether the model code itself works.
 on:
   push:
     branches: [main, master]
@@ -13,7 +13,12 @@ permissions: read-all
 
 jobs:
   model-tests:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    name: model-tests (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest]
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       SVYEXPO_REQUIRE_INLA: "true"
