@@ -30,6 +30,17 @@ jobs:
           use-public-rspm: true
           extra-repositories: https://inla.r-inla-download.org/R/stable
       - uses: r-lib/actions/setup-r-dependencies@v2
+        id: deps
+        continue-on-error: true
+        with:
+          extra-packages: any::devtools
+          needs: check
+      - name: Wait before retrying (package index was unavailable)
+        if: steps.deps.outcome == 'failure'
+        run: sleep 60
+        shell: bash
+      - uses: r-lib/actions/setup-r-dependencies@v2
+        if: steps.deps.outcome == 'failure'
         with:
           extra-packages: any::devtools
           needs: check
