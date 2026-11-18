@@ -67,6 +67,43 @@
 <span></span>
 <span><span class="co"># Needed for spatially varying coefficients (posterior sampling):</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"sn"</span><span class="op">)</span></span></code></pre></div>
+<p>Requires R &gt;= 4.1. Modules 1-4 (ingest, boundaries, exposure linkage, adjacency) work without INLA; only model fitting and posterior summaries need INLA, and spatially varying coefficients also need <code>sn</code>.</p>
+</div>
+<div class="section level2">
+<h2 id="platform-support-and-testing">Platform support and testing<a class="anchor" aria-label="anchor" href="#platform-support-and-testing"></a>
+</h2>
+<p>Every push is tested on GitHub Actions:</p>
+<table class="table">
+<colgroup>
+<col width="33%">
+<col width="33%">
+<col width="33%">
+</colgroup>
+<thead><tr>
+<th>Platform</th>
+<th><code>R CMD check</code></th>
+<th>Model tests with INLA</th>
+</tr></thead>
+<tbody>
+<tr>
+<td>Linux (Ubuntu)</td>
+<td>passes (model tests skipped, see below)</td>
+<td>passes</td>
+</tr>
+<tr>
+<td>macOS (Apple silicon)</td>
+<td>passes (model tests skipped, see below)</td>
+<td>passes</td>
+</tr>
+<tr>
+<td>Windows</td>
+<td>passes</td>
+<td>passes</td>
+</tr>
+</tbody>
+</table>
+<p>Intel Macs are not tested. Model tests on Linux and macOS run directly with INLA required; on Windows they run inside <code>R CMD check</code>.</p>
+<p><strong>Known issue.</strong> Inside <code>R CMD check</code> on Linux and macOS, INLA’s own program fails on models with a spatial graph (error: “N simultaneous processes spawned”), while the same models run normally outside <code>R CMD check</code> and on Windows. The package’s checks therefore skip model fitting where INLA cannot fit a small test model, and a separate CI job runs the model tests outside <code>R CMD check</code>. The cause is not yet identified. It has not appeared in any run outside <code>R CMD check</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="workflow">Workflow<a class="anchor" aria-label="anchor" href="#workflow"></a>
@@ -157,6 +194,24 @@
 <h2 id="data-use">Data use<a class="anchor" aria-label="anchor" href="#data-use"></a>
 </h2>
 <p>DHS data cannot be redistributed. Examples and tests use <code><a href="reference/svy_simulate.html">svy_simulate()</a></code>; apply for access to real data at <a href="https://dhsprogram.com" class="external-link uri">https://dhsprogram.com</a>.</p>
+</div>
+<div class="section level2">
+<h2 id="limitations">Limitations<a class="anchor" aria-label="anchor" href="#limitations"></a>
+</h2>
+<ul>
+<li>
+<strong>Survey design.</strong> INLA fits a model-based analysis and does not use sampling weights. Adjust for the design with stratification variables (for example region and urban/rural) as fixed effects, and consider a cluster-level random effect. For design-based small-area prevalence, use SUMMER or surveyPrev.</li>
+<li>
+<strong>Location error.</strong> Buffers of 2 km (urban) and 5 km (rural) account for DHS displacement but do not remove exposure misclassification, and a small share of rural clusters are displaced by up to 10 km.</li>
+<li>
+<strong>Boundaries.</strong> GADM boundaries can differ from the survey’s own administrative boundaries, so some clusters fall in a different area.</li>
+<li>
+<strong>Calendars.</strong> Interview dates from Ethiopia (Ethiopian calendar) and Nepal (Vikram Samvat) are not converted to the Gregorian calendar; a warning is raised.</li>
+<li>
+<strong>Spatially varying effects.</strong> With few clusters per area these estimates are weakly identified and depend on the priors. Report them with exceedance probabilities and check sensitivity to <code><a href="reference/svy_priors.html">svy_priors()</a></code>.</li>
+<li>
+<strong>Not yet validated on real survey files.</strong> The DHS adapter and the models have been tested on simulated data only. Test on your own data before relying on results. Associations are not necessarily causal.</li>
+</ul>
 </div>
 <div class="section level2">
 <h2 id="status">Status<a class="anchor" aria-label="anchor" href="#status"></a>

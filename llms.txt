@@ -25,6 +25,31 @@ install.packages("INLA",
 install.packages("sn")
 ```
 
+Requires R \>= 4.1. Modules 1-4 (ingest, boundaries, exposure linkage,
+adjacency) work without INLA; only model fitting and posterior summaries
+need INLA, and spatially varying coefficients also need `sn`.
+
+## Platform support and testing
+
+Every push is tested on GitHub Actions:
+
+| Platform | `R CMD check` | Model tests with INLA |
+|----|----|----|
+| Linux (Ubuntu) | passes (model tests skipped, see below) | passes |
+| macOS (Apple silicon) | passes (model tests skipped, see below) | passes |
+| Windows | passes | passes |
+
+Intel Macs are not tested. Model tests on Linux and macOS run directly
+with INLA required; on Windows they run inside `R CMD check`.
+
+**Known issue.** Inside `R CMD check` on Linux and macOS, INLA’s own
+program fails on models with a spatial graph (error: “N simultaneous
+processes spawned”), while the same models run normally outside
+`R CMD check` and on Windows. The package’s checks therefore skip model
+fitting where INLA cannot fit a small test model, and a separate CI job
+runs the model tests outside `R CMD check`. The cause is not yet
+identified. It has not appeared in any run outside `R CMD check`.
+
 ## Workflow
 
 | Module | Functions | What it does |
@@ -75,6 +100,29 @@ svyexpo never loads a whole raster into memory:
 DHS data cannot be redistributed. Examples and tests use
 [`svy_simulate()`](https://niiattey.github.io/svyexpo/reference/svy_simulate.md);
 apply for access to real data at <https://dhsprogram.com>.
+
+## Limitations
+
+- **Survey design.** INLA fits a model-based analysis and does not use
+  sampling weights. Adjust for the design with stratification variables
+  (for example region and urban/rural) as fixed effects, and consider a
+  cluster-level random effect. For design-based small-area prevalence,
+  use SUMMER or surveyPrev.
+- **Location error.** Buffers of 2 km (urban) and 5 km (rural) account
+  for DHS displacement but do not remove exposure misclassification, and
+  a small share of rural clusters are displaced by up to 10 km.
+- **Boundaries.** GADM boundaries can differ from the survey’s own
+  administrative boundaries, so some clusters fall in a different area.
+- **Calendars.** Interview dates from Ethiopia (Ethiopian calendar) and
+  Nepal (Vikram Samvat) are not converted to the Gregorian calendar; a
+  warning is raised.
+- **Spatially varying effects.** With few clusters per area these
+  estimates are weakly identified and depend on the priors. Report them
+  with exceedance probabilities and check sensitivity to
+  [`svy_priors()`](https://niiattey.github.io/svyexpo/reference/svy_priors.md).
+- **Not yet validated on real survey files.** The DHS adapter and the
+  models have been tested on simulated data only. Test on your own data
+  before relying on results. Associations are not necessarily causal.
 
 ## Status
 

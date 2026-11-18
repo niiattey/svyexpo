@@ -169,12 +169,12 @@ once.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── Hyperparameters</span></span>
 <span><span class="co">#&gt;                                       mean        sd 0.025quant 0.975quant</span></span>
-<span><span class="co">#&gt; Precision for svy_area_idx          5.2658    1.6908     2.6960     9.2793</span></span>
+<span><span class="co">#&gt; Precision for svy_area_idx          5.2658    1.6908     2.6960     9.2792</span></span>
 <span><span class="co">#&gt; Phi for svy_area_idx                0.8759    0.1280     0.5260     0.9970</span></span>
-<span><span class="co">#&gt; Precision for svy_svc_idx_pm25_z 1333.8414 9098.0251    10.4889  9057.1638</span></span>
+<span><span class="co">#&gt; Precision for svy_svc_idx_pm25_z 1333.8657 9098.3563    10.4894  9057.3078</span></span>
 <span><span class="fu"><a href="../reference/svy_diagnostics.html">svy_diagnostics</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
 <span><span class="co">#&gt;       dic     waic p_eff_waic log_score cpo_failures</span></span>
-<span><span class="co">#&gt; 1 3982.78 3982.734   30.63782 0.5531588            0</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 3982.78 3982.734   30.63778 0.5531588            0</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="outputs">6. Outputs<a class="anchor" aria-label="anchor" href="#outputs"></a>
@@ -184,12 +184,12 @@ once.</p>
 <span><span class="va">slopes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/svy_svc_effects.html">svy_svc_effects</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"pm25_z"</span>, exponentiate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">slopes</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   area_id     mean        sd      q025     q500     q975 prob_exceed</span></span>
-<span><span class="co">#&gt; 1     A01 1.416462 0.2264661 1.0133468 1.403260 1.929360       0.978</span></span>
-<span><span class="co">#&gt; 2     A02 1.379769 0.2017396 0.9798304 1.377176 1.806173       0.968</span></span>
-<span><span class="co">#&gt; 3     A03 1.433805 0.2375745 1.0347418 1.406662 1.981650       0.982</span></span>
-<span><span class="co">#&gt; 4     A04 1.447311 0.2535189 1.0541640 1.416279 2.045506       0.982</span></span>
-<span><span class="co">#&gt; 5     A05 1.430459 0.2472499 0.9712126 1.402245 2.004626       0.970</span></span>
-<span><span class="co">#&gt; 6     A06 1.423023 0.2568227 0.9999003 1.392178 2.050675       0.975</span></span></code></pre></div>
+<span><span class="co">#&gt; 1     A01 1.404222 0.2274718 1.0030213 1.388687 1.900165       0.975</span></span>
+<span><span class="co">#&gt; 2     A02 1.368294 0.2050600 0.9674133 1.356612 1.804009       0.964</span></span>
+<span><span class="co">#&gt; 3     A03 1.424605 0.2613717 0.9769857 1.397174 2.011806       0.969</span></span>
+<span><span class="co">#&gt; 4     A04 1.448597 0.2590464 1.0329561 1.411948 2.045945       0.979</span></span>
+<span><span class="co">#&gt; 5     A05 1.418653 0.2624374 0.9922021 1.393247 2.013515       0.973</span></span>
+<span><span class="co">#&gt; 6     A06 1.405446 0.2397681 0.9516402 1.390613 1.928221       0.967</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/svy_map.html">svy_map</a></span><span class="op">(</span><span class="va">slopes</span>, <span class="va">sim</span><span class="op">$</span><span class="va">boundaries</span>, fill <span class="op">=</span> <span class="st">"mean"</span>,</span>
 <span>        title <span class="op">=</span> <span class="st">"Odds ratio per SD of PM2.5"</span><span class="op">)</span></span></code></pre></div>
