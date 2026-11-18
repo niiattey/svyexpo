@@ -1,0 +1,157 @@
+# svyexpo
+
+**svyexpo** links geocoded household surveys (DHS, MICS, or your own) to
+raster exposures and fits Bayesian spatial models of exposure–outcome
+associations, including effects that vary across space.
+
+Existing packages such as SUMMER and surveyPrev focus on small-area
+**prevalence** mapping. svyexpo focuses on **associations**: how much an
+environmental exposure (PM₂.₅, greenness, temperature) changes an
+outcome, and where that effect is stronger or weaker.
+
+## Installation
+
+``` r
+
+# install.packages("remotes")
+remotes::install_github("niiattey/svyexpo")
+
+# INLA is needed for model fitting and is not on CRAN:
+install.packages("INLA",
+  repos = c(getOption("repos"), INLA = "https://inla.r-inla-download.org/R/stable"),
+  dep = TRUE)
+
+# Needed for spatially varying coefficients (posterior sampling):
+install.packages("sn")
+```
+
+## Workflow
+
+| Module | Functions | What it does |
+|----|----|----|
+| 1\. Ingest | [`svy_standardize()`](https://niiattey.github.io/svyexpo/reference/svy_standardize.md), [`svy_from_dhs()`](https://niiattey.github.io/svyexpo/reference/svy_from_dhs.md), [`cmc_to_date()`](https://niiattey.github.io/svyexpo/reference/cmc_to_date.md) | Map any survey to a standard schema |
+| 2\. Boundaries | [`svy_boundaries()`](https://niiattey.github.io/svyexpo/reference/svy_boundaries.md), [`svy_assign_areas()`](https://niiattey.github.io/svyexpo/reference/svy_assign_areas.md) | Download GADM, assign clusters to areas |
+| 3\. Exposure | [`svy_buffers()`](https://niiattey.github.io/svyexpo/reference/svy_buffers.md), [`svy_extract()`](https://niiattey.github.io/svyexpo/reference/svy_extract.md), [`svy_extract_by_year()`](https://niiattey.github.io/svyexpo/reference/svy_extract_by_year.md) | Displacement-aware buffers, year-matched extraction |
+| 4\. Structure | [`svy_adjacency()`](https://niiattey.github.io/svyexpo/reference/svy_adjacency.md) | Adjacency graph with island repair |
+| 5\. Models | [`svy_fit_bym2()`](https://niiattey.github.io/svyexpo/reference/svy_fit_bym2.md), [`svy_priors()`](https://niiattey.github.io/svyexpo/reference/svy_priors.md) | BYM2 + spatially varying coefficients (INLA) |
+| 6\. Outputs | [`svy_area_effects()`](https://niiattey.github.io/svyexpo/reference/svy_area_effects.md), [`svy_svc_effects()`](https://niiattey.github.io/svyexpo/reference/svy_svc_effects.md), [`svy_diagnostics()`](https://niiattey.github.io/svyexpo/reference/svy_diagnostics.md), [`svy_map()`](https://niiattey.github.io/svyexpo/reference/svy_map.md) | Posterior summaries, exceedance probabilities, maps |
+
+``` r
+
+library(svyexpo)
+
+pts   <- svy_from_dhs(kr, gps, id_vars = c("v001", "v002", "v003", "bidx"))
+areas <- svy_boundaries("GHA", level = 2)
+pts   <- svy_assign_areas(pts, areas)
+
+expo  <- svy_extract_by_year(svy_buffers(pts), "pm25_2000_2022.tif", name = "pm25")
+dat   <- merge(sf::st_drop_geometry(pts), expo, by = "id")
+
+graph <- svy_adjacency(areas)
+fit   <- svy_fit_bym2(dat, stunted ~ pm25 + urban, graph, svc = "pm25")
+svy_map(svy_svc_effects(fit, "pm25", exponentiate = TRUE), areas)
+```
+
+Run
+[`vignette("svyexpo")`](https://niiattey.github.io/svyexpo/articles/svyexpo.md)
+for a full example on simulated data.
+
+## Large rasters
+
+svyexpo never loads a whole raster into memory:
+
+- [`terra::rast()`](https://rspatial.github.io/terra/reference/rast.html)
+  opens only the file header.
+- When the area covered by all buffers is small, the raster is cropped
+  to it once. Otherwise `exactextractr` reads it block by block under
+  each buffer.
+- Cloud-Optimized GeoTIFFs can be read straight from a URL with
+  `"/vsicurl/https://..."`, downloading only the tiles needed.
+- `svy_extract(cache_file = "pm25.parquet")` saves the extracted table,
+  so later runs skip the raster entirely.
+
+## Data use
+
+DHS data cannot be redistributed. Examples and tests use
+[`svy_simulate()`](https://niiattey.github.io/svyexpo/reference/svy_simulate.md);
+apply for access to real data at <https://dhsprogram.com>.
+
+## Status
+
+Experimental. Interfaces may change before version 0.1.0.
+
+# Package index
+
+## 
+
+Ingest
+
+- [`svy_standardize()`](https://niiattey.github.io/svyexpo/reference/svy_standardize.md)
+  : Standardise survey records to the svyexpo schema
+- [`svy_from_dhs()`](https://niiattey.github.io/svyexpo/reference/svy_from_dhs.md)
+  : Prepare a DHS recode file and GPS dataset
+- [`cmc_to_date()`](https://niiattey.github.io/svyexpo/reference/cmc_to_date.md)
+  : Convert century month codes to dates
+- [`svy_schema()`](https://niiattey.github.io/svyexpo/reference/svy_schema.md)
+  : Standard column names used throughout svyexpo
+
+## 
+
+Boundaries
+
+- [`svy_boundaries()`](https://niiattey.github.io/svyexpo/reference/svy_boundaries.md)
+  : Download administrative boundaries from GADM
+- [`svy_assign_areas()`](https://niiattey.github.io/svyexpo/reference/svy_assign_areas.md)
+  : Assign survey clusters to administrative areas
+
+## 
+
+Exposure linkage
+
+- [`svy_buffers()`](https://niiattey.github.io/svyexpo/reference/svy_buffers.md)
+  : Create displacement-aware buffers around survey clusters
+- [`svy_extract()`](https://niiattey.github.io/svyexpo/reference/svy_extract.md)
+  : Extract raster values within buffers
+- [`svy_extract_by_year()`](https://niiattey.github.io/svyexpo/reference/svy_extract_by_year.md)
+  : Extract exposures matched to each record's survey year
+
+## 
+
+Spatial structure
+
+- [`svy_adjacency()`](https://niiattey.github.io/svyexpo/reference/svy_adjacency.md)
+  : Build the spatial neighbourhood graph for areal models
+
+## 
+
+Models
+
+- [`svy_fit_bym2()`](https://niiattey.github.io/svyexpo/reference/svy_fit_bym2.md)
+  : Fit a BYM2 model with optional spatially varying coefficients
+- [`svy_priors()`](https://niiattey.github.io/svyexpo/reference/svy_priors.md)
+  : Default penalised complexity (PC) priors
+
+## 
+
+Outputs
+
+- [`svy_area_effects()`](https://niiattey.github.io/svyexpo/reference/svy_area_effects.md)
+  : Posterior summaries of area random effects
+- [`svy_svc_effects()`](https://niiattey.github.io/svyexpo/reference/svy_svc_effects.md)
+  : Posterior summaries of spatially varying coefficients
+- [`svy_diagnostics()`](https://niiattey.github.io/svyexpo/reference/svy_diagnostics.md)
+  : Model fit diagnostics
+- [`svy_map()`](https://niiattey.github.io/svyexpo/reference/svy_map.md)
+  : Map area-level estimates
+
+## Simulated data
+
+- [`svy_simulate()`](https://niiattey.github.io/svyexpo/reference/svy_simulate.md)
+  : Simulate a small survey, boundary set and exposure raster
+
+# Articles
+
+### All vignettes
+
+- [Getting started with
+  svyexpo](https://niiattey.github.io/svyexpo/articles/svyexpo.md):
