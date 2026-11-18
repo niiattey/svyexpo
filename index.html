@@ -39,6 +39,12 @@
       <ul class="navbar-nav me-auto">
 <li class="nav-item"><a class="nav-link" href="articles/svyexpo.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="articles/exposure.html">Assigning exposure to people</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -146,9 +152,9 @@
 <tr>
 <td>3. Exposure</td>
 <td>
-<code><a href="reference/svy_buffers.html">svy_buffers()</a></code>, <code><a href="reference/svy_extract.html">svy_extract()</a></code>, <code><a href="reference/svy_extract_by_year.html">svy_extract_by_year()</a></code>
+<code><a href="reference/svy_exposure.html">svy_exposure()</a></code>, <code><a href="reference/svy_expose.html">svy_expose()</a></code>, <code><a href="reference/svy_windows.html">svy_windows()</a></code>
 </td>
-<td>Displacement-aware buffers, year-matched extraction</td>
+<td>Link rasters, monitor CSVs or area tables to people over their own time windows</td>
 </tr>
 <tr>
 <td>4. Structure</td>
@@ -178,13 +184,53 @@
 <span><span class="va">areas</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/svy_boundaries.html">svy_boundaries</a></span><span class="op">(</span><span class="st">"GHA"</span>, level <span class="op">=</span> <span class="fl">2</span><span class="op">)</span></span>
 <span><span class="va">pts</span>   <span class="op">&lt;-</span> <span class="fu"><a href="reference/svy_assign_areas.html">svy_assign_areas</a></span><span class="op">(</span><span class="va">pts</span>, <span class="va">areas</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">expo</span>  <span class="op">&lt;-</span> <span class="fu"><a href="reference/svy_extract_by_year.html">svy_extract_by_year</a></span><span class="op">(</span><span class="fu"><a href="reference/svy_buffers.html">svy_buffers</a></span><span class="op">(</span><span class="va">pts</span><span class="op">)</span>, <span class="st">"pm25_2000_2022.tif"</span>, name <span class="op">=</span> <span class="st">"pm25"</span><span class="op">)</span></span>
+<span><span class="va">expo</span>  <span class="op">&lt;-</span> <span class="fu"><a href="reference/svy_expose.html">svy_expose</a></span><span class="op">(</span><span class="va">pts</span>, <span class="fu"><a href="reference/svy_exposure.html">svy_exposure</a></span><span class="op">(</span><span class="st">"pm25_2000_2022.tif"</span><span class="op">)</span>,</span>
+<span>                    windows <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>year_before <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">364</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>                    radius_km <span class="op">=</span> <span class="st">"dhs"</span>, name <span class="op">=</span> <span class="st">"pm25"</span>, format <span class="op">=</span> <span class="st">"wide"</span><span class="op">)</span></span>
 <span><span class="va">dat</span>   <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge</a></span><span class="op">(</span><span class="fu">sf</span><span class="fu">::</span><span class="fu"><a href="https://r-spatial.github.io/sf/reference/st_geometry.html" class="external-link">st_drop_geometry</a></span><span class="op">(</span><span class="va">pts</span><span class="op">)</span>, <span class="va">expo</span>, by <span class="op">=</span> <span class="st">"id"</span><span class="op">)</span></span>
+<span><span class="va">dat</span><span class="op">$</span><span class="va">pm25</span> <span class="op">&lt;-</span> <span class="va">dat</span><span class="op">$</span><span class="va">pm25_year_before_dhs</span></span>
 <span></span>
 <span><span class="va">graph</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/svy_adjacency.html">svy_adjacency</a></span><span class="op">(</span><span class="va">areas</span><span class="op">)</span></span>
 <span><span class="va">fit</span>   <span class="op">&lt;-</span> <span class="fu"><a href="reference/svy_fit_bym2.html">svy_fit_bym2</a></span><span class="op">(</span><span class="va">dat</span>, <span class="va">stunted</span> <span class="op">~</span> <span class="va">pm25</span> <span class="op">+</span> <span class="va">urban</span>, <span class="va">graph</span>, svc <span class="op">=</span> <span class="st">"pm25"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="reference/svy_map.html">svy_map</a></span><span class="op">(</span><span class="fu"><a href="reference/svy_svc_effects.html">svy_svc_effects</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"pm25"</span>, exponentiate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>, <span class="va">areas</span><span class="op">)</span></span></code></pre></div>
 <p>Run <code><a href="articles/svyexpo.html">vignette("svyexpo")</a></code> for a full example on simulated data.</p>
+</div>
+<div class="section level2">
+<h2 id="assigning-exposure">Assigning exposure<a class="anchor" aria-label="anchor" href="#assigning-exposure"></a>
+</h2>
+<p><code><a href="reference/svy_expose.html">svy_expose()</a></code> links an exposure to each person over time windows you define, measured from an anchor date such as date of birth. The exposure can be a raster or any table you already have.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">people</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html" class="external-link">data.frame</a></span><span class="op">(</span><span class="va">id</span>, date <span class="op">=</span> <span class="va">birth_date</span>, <span class="va">lon</span>, <span class="va">lat</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 1. Say what the exposure data are. Any of these:</span></span>
+<span><span class="va">src</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/svy_exposure.html">svy_exposure</a></span><span class="op">(</span><span class="st">"pm25_monthly.tif"</span><span class="op">)</span>                  <span class="co"># raster, one layer per month</span></span>
+<span><span class="va">src</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/svy_exposure.html">svy_exposure</a></span><span class="op">(</span><span class="st">"monitors.csv"</span>, unit <span class="op">=</span> <span class="st">"monitor"</span>,    <span class="co"># monitor readings (CSV)</span></span>
+<span>                    value <span class="op">=</span> <span class="st">"pm25"</span><span class="op">)</span>                      <span class="co">#   id, lon, lat, date, value</span></span>
+<span><span class="va">src</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/svy_exposure.html">svy_exposure</a></span><span class="op">(</span><span class="st">"cells.csv"</span>, type <span class="op">=</span> <span class="st">"grid"</span><span class="op">)</span>          <span class="co"># raster saved as a table</span></span>
+<span><span class="va">src</span> <span class="op">&lt;-</span> <span class="fu"><a href="reference/svy_exposure.html">svy_exposure</a></span><span class="op">(</span><span class="st">"districts.csv"</span>, unit <span class="op">=</span> <span class="st">"district"</span>,  <span class="co"># area-level series</span></span>
+<span>                    boundaries <span class="op">=</span> <span class="va">gadm2</span>, boundary_id <span class="op">=</span> <span class="st">"district"</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># 2. Choose windows and buffer sizes.</span></span>
+<span><span class="fu"><a href="reference/svy_expose.html">svy_expose</a></span><span class="op">(</span><span class="va">people</span>, <span class="va">src</span>,</span>
+<span>           windows   <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>prenatal <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">270</span>, <span class="op">-</span><span class="fl">1</span><span class="op">)</span>,      <span class="co"># days before birth</span></span>
+<span>                            postnatal <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">364</span><span class="op">)</span>,       <span class="co"># first year of life</span></span>
+<span>                            cumulative <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">270</span>, <span class="fl">364</span><span class="op">)</span><span class="op">)</span>,</span>
+<span>           radius_km <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>, <span class="fl">2</span>, <span class="fl">5</span><span class="op">)</span>,</span>
+<span>           assign    <span class="op">=</span> <span class="st">"mean"</span>,       <span class="co"># monitors: "mean", "nearest" or "idw"</span></span>
+<span>           name      <span class="op">=</span> <span class="st">"pm25"</span><span class="op">)</span></span></code></pre></div>
+<ul>
+<li>
+<strong>Windows</strong> are offsets from the anchor in days, weeks, months or years (<code>window_unit = "months"</code>); they can overlap, so a cumulative window is just a longer one. <code><a href="reference/svy_windows.html">svy_windows()</a></code> has presets (prenatal/postnatal, trimesters, first 1,000 days).</li>
+<li>
+<strong>Anchor.</strong> If you have an interview date and the child’s age, use <code>date_is = "interview", age_months = "age"</code> and the birth date is derived.</li>
+<li>
+<strong>Mixed time steps.</strong> Daily, hourly, monthly, annual or irregular data are all handled; periods longer than a day are weighted by the days that fall in the window. Hourly timestamps are averaged to days first.</li>
+<li>
+<strong>Coverage.</strong> Every result reports <code>coverage</code>, the share of the window’s days with data. Windows below <code>min_coverage</code> (default 0.75) are <code>NA</code>.</li>
+<li>
+<strong>Buffers.</strong> Any radius or set of radii, or <code>radius_km = "dhs"</code> for 2 km urban and 5 km rural.</li>
+</ul>
+<p>Run <code><a href="articles/exposure.html">vignette("exposure")</a></code> for worked examples with simulated data.</p>
 </div>
 <div class="section level2">
 <h2 id="large-rasters">Large rasters<a class="anchor" aria-label="anchor" href="#large-rasters"></a>
@@ -208,18 +254,14 @@
 <h2 id="limitations">Limitations<a class="anchor" aria-label="anchor" href="#limitations"></a>
 </h2>
 <ul>
-<li>
-<strong>Survey design.</strong> INLA fits a model-based analysis and does not use sampling weights. Adjust for the design with stratification variables (for example region and urban/rural) as fixed effects, and consider a cluster-level random effect. For design-based small-area prevalence, use SUMMER or surveyPrev.</li>
-<li>
-<strong>Location error.</strong> Buffers of 2 km (urban) and 5 km (rural) account for DHS displacement but do not remove exposure misclassification, and a small share of rural clusters are displaced by up to 10 km.</li>
-<li>
-<strong>Boundaries.</strong> GADM boundaries can differ from the survey’s own administrative boundaries, so some clusters fall in a different area.</li>
-<li>
-<strong>Calendars.</strong> Interview dates from Ethiopia (Ethiopian calendar) and Nepal (Vikram Samvat) are not converted to the Gregorian calendar; a warning is raised.</li>
-<li>
-<strong>Spatially varying effects.</strong> With few clusters per area these estimates are weakly identified and depend on the priors. Report them with exceedance probabilities and check sensitivity to <code><a href="reference/svy_priors.html">svy_priors()</a></code>.</li>
-<li>
-<strong>Not yet validated on real survey files.</strong> The DHS adapter and the models have been tested on simulated data only. Test on your own data before relying on results. Associations are not necessarily causal.</li>
+<li><p><strong>Monitor data.</strong> Averaging, nearest-monitor and inverse-distance assignment are simple ways to represent a person’s exposure from a sparse network. They do not model how pollution varies between monitors, so exposure misclassification can be large far from any monitor. Use the <code>radius_km</code> and <code>min_sources</code> settings to limit how far a reading is stretched, and report how many people have values.</p></li>
+<li><p><strong>Exposure windows.</strong> Month and year windows follow the calendar, with both ends included. Use days when you need exact lengths.</p></li>
+<li><p><strong>Survey design.</strong> INLA fits a model-based analysis and does not use sampling weights. Adjust for the design with stratification variables (for example region and urban/rural) as fixed effects, and consider a cluster-level random effect. For design-based small-area prevalence, use SUMMER or surveyPrev.</p></li>
+<li><p><strong>Location error.</strong> Buffers of 2 km (urban) and 5 km (rural) account for DHS displacement but do not remove exposure misclassification, and a small share of rural clusters are displaced by up to 10 km.</p></li>
+<li><p><strong>Boundaries.</strong> GADM boundaries can differ from the survey’s own administrative boundaries, so some clusters fall in a different area.</p></li>
+<li><p><strong>Calendars.</strong> Interview dates from Ethiopia (Ethiopian calendar) and Nepal (Vikram Samvat) are not converted to the Gregorian calendar; a warning is raised.</p></li>
+<li><p><strong>Spatially varying effects.</strong> With few clusters per area these estimates are weakly identified and depend on the priors. Report them with exceedance probabilities and check sensitivity to <code><a href="reference/svy_priors.html">svy_priors()</a></code>.</p></li>
+<li><p><strong>Not yet validated on real survey files.</strong> The DHS adapter and the models have been tested on simulated data only. Test on your own data before relying on results. Associations are not necessarily causal.</p></li>
 </ul>
 </div>
 <div class="section level2">

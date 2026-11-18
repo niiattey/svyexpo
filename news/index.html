@@ -17,6 +17,10 @@
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto"><li class="nav-item"><a class="nav-link" href="../articles/svyexpo.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles"><li><a class="dropdown-item" href="../articles/exposure.html">Assigning exposure to people</a></li>
+  </ul></li>
 <li class="active nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul><ul class="navbar-nav"><li class="nav-item"><form class="form-inline" role="search">
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json"></form></li>
@@ -34,7 +38,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="0.0.0.9000" id="svyexpo-0009000">svyexpo 0.0.0.9000<a class="anchor" aria-label="anchor" href="#svyexpo-0009000"></a></h2>
-<ul><li>Initial skeleton: ingest, boundaries, exposure linkage, adjacency, BYM2/SVC models and outputs, with a simulated-data workflow.</li>
+<ul><li><p>New exposure assignment interface: <code><a href="../reference/svy_exposure.html">svy_exposure()</a></code> describes a raster, monitor CSV, gridded table or area-level table; <code><a href="../reference/svy_expose.html">svy_expose()</a></code> assigns exposure over user-defined windows (days, weeks, months or years from a birth or interview anchor), for one or several buffer radii, with a coverage report and a minimum-coverage rule; <code><a href="../reference/svy_windows.html">svy_windows()</a></code> gives presets. <code><a href="../reference/svy_extract_by_year.html">svy_extract_by_year()</a></code> is kept for annual rasters.</p></li>
+<li><p>Initial skeleton: ingest, boundaries, exposure linkage, adjacency, BYM2/SVC models and outputs, with a simulated-data workflow.</p></li>
 </ul></div>
   </main></div>
 

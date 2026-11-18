@@ -59,8 +59,10 @@ Useful links:
 
 - <https://github.com/niiattey/svyexpo>
 
+- <https://niiattey.github.io/svyexpo/>
+
 - Report bugs at <https://github.com/niiattey/svyexpo/issues>
 
 ## Author
 
-**Maintainer**: Patrick Attey-Yeboah <your.email@example.com>
+**Maintainer**: Patrick Attey-Yeboah <niiatteyyeboah@gmail.com>

@@ -26,6 +26,12 @@ Boundaries
 
 Exposure linkage
 
+- [`svy_exposure()`](https://niiattey.github.io/svyexpo/reference/svy_exposure.md)
+  : Describe an exposure data source
+- [`svy_expose()`](https://niiattey.github.io/svyexpo/reference/svy_expose.md)
+  : Assign exposures to people over their own time windows
+- [`svy_windows()`](https://niiattey.github.io/svyexpo/reference/svy_windows.md)
+  : Ready-made exposure windows
 - [`svy_buffers()`](https://niiattey.github.io/svyexpo/reference/svy_buffers.md)
   : Create displacement-aware buffers around survey clusters
 - [`svy_extract()`](https://niiattey.github.io/svyexpo/reference/svy_extract.md)

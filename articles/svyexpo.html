@@ -36,6 +36,12 @@
       <ul class="navbar-nav me-auto">
 <li class="active nav-item"><a class="nav-link" href="../articles/svyexpo.html">Get started</a></li>
 <li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/exposure.html">Assigning exposure to people</a></li>
+  </ul>
+</li>
 <li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
 <ul class="navbar-nav">
@@ -174,12 +180,12 @@ once.</p>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; ── Hyperparameters</span></span>
 <span><span class="co">#&gt;                                       mean        sd 0.025quant 0.975quant</span></span>
-<span><span class="co">#&gt; Precision for svy_area_idx          5.2658    1.6908     2.6960     9.2793</span></span>
+<span><span class="co">#&gt; Precision for svy_area_idx          5.2658    1.6908     2.6959     9.2791</span></span>
 <span><span class="co">#&gt; Phi for svy_area_idx                0.8759    0.1280     0.5260     0.9970</span></span>
-<span><span class="co">#&gt; Precision for svy_svc_idx_pm25_z 1334.0018 9099.7122    10.4887  9058.2168</span></span>
+<span><span class="co">#&gt; Precision for svy_svc_idx_pm25_z 1334.0921 9100.7813    10.4890  9058.7897</span></span>
 <span><span class="fu"><a href="../reference/svy_diagnostics.html">svy_diagnostics</a></span><span class="op">(</span><span class="va">fit</span><span class="op">)</span></span>
 <span><span class="co">#&gt;       dic     waic p_eff_waic log_score cpo_failures</span></span>
-<span><span class="co">#&gt; 1 3982.78 3982.734   30.63781 0.5531588            0</span></span></code></pre></div>
+<span><span class="co">#&gt; 1 3982.78 3982.734   30.63778 0.5531588            0</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="outputs">6. Outputs<a class="anchor" aria-label="anchor" href="#outputs"></a>
@@ -189,12 +195,12 @@ once.</p>
 <span><span class="va">slopes</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/svy_svc_effects.html">svy_svc_effects</a></span><span class="op">(</span><span class="va">fit</span>, <span class="st">"pm25_z"</span>, exponentiate <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">slopes</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   area_id     mean        sd      q025     q500     q975 prob_exceed</span></span>
-<span><span class="co">#&gt; 1     A01 1.406894 0.2302387 1.0050635 1.386819 1.969443       0.977</span></span>
-<span><span class="co">#&gt; 2     A02 1.365586 0.2100522 0.9784958 1.352338 1.790267       0.966</span></span>
-<span><span class="co">#&gt; 3     A03 1.435943 0.2411411 1.0422181 1.405294 1.970024       0.979</span></span>
-<span><span class="co">#&gt; 4     A04 1.444159 0.2510845 1.0556205 1.406540 2.006811       0.989</span></span>
-<span><span class="co">#&gt; 5     A05 1.422534 0.2417822 1.0061052 1.395665 1.918144       0.977</span></span>
-<span><span class="co">#&gt; 6     A06 1.402727 0.2323830 0.9798375 1.383515 1.944048       0.969</span></span></code></pre></div>
+<span><span class="co">#&gt; 1     A01 1.402989 0.2175232 1.0316059 1.385137 1.921318       0.982</span></span>
+<span><span class="co">#&gt; 2     A02 1.371399 0.1962687 0.9799995 1.368126 1.783226       0.968</span></span>
+<span><span class="co">#&gt; 3     A03 1.437155 0.2501754 1.0089803 1.402223 2.048861       0.977</span></span>
+<span><span class="co">#&gt; 4     A04 1.440853 0.2500285 1.0313633 1.409238 2.040239       0.982</span></span>
+<span><span class="co">#&gt; 5     A05 1.431877 0.2564553 0.9803983 1.411877 2.009123       0.972</span></span>
+<span><span class="co">#&gt; 6     A06 1.421155 0.2515464 0.9570395 1.398902 2.006247       0.961</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/svy_map.html">svy_map</a></span><span class="op">(</span><span class="va">slopes</span>, <span class="va">sim</span><span class="op">$</span><span class="va">boundaries</span>, fill <span class="op">=</span> <span class="st">"mean"</span>,</span>
 <span>        title <span class="op">=</span> <span class="st">"Odds ratio per SD of PM2.5"</span><span class="op">)</span></span></code></pre></div>
