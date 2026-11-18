@@ -3,7 +3,7 @@ pkgdown: 2.2.1
 pkgdown_sha: ~
 articles:
   svyexpo: svyexpo.html
-last_built: 2026-11-18T11:20Z
+last_built: 2026-11-18T11:39Z
 urls:
   reference: https://niiattey.github.io/svyexpo/reference
   article: https://niiattey.github.io/svyexpo/articles
