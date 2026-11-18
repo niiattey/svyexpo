@@ -45,12 +45,13 @@ repeated downloads, e.g.
 Useful links:
 \itemize{
   \item \url{https://github.com/niiattey/svyexpo}
+  \item \url{https://niiattey.github.io/svyexpo/}
   \item Report bugs at \url{https://github.com/niiattey/svyexpo/issues}
 }
 
 }
 \author{
-\strong{Maintainer}: Patrick Attey-Yeboah \email{your.email@example.com}
+\strong{Maintainer}: Patrick Attey-Yeboah \email{niiatteyyeboah@gmail.com}
 
 }
 \keyword{internal}

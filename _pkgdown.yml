@@ -10,7 +10,7 @@ reference:
   - title: "2. Boundaries"
     contents: [svy_boundaries, svy_assign_areas]
   - title: "3. Exposure linkage"
-    contents: [svy_buffers, svy_extract, svy_extract_by_year]
+    contents: [svy_exposure, svy_expose, svy_windows, svy_buffers, svy_extract, svy_extract_by_year]
   - title: "4. Spatial structure"
     contents: [svy_adjacency]
   - title: "5. Models"
