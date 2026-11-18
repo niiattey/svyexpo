@@ -1,0 +1,103 @@
+---
+title: "Getting started with svyexpo"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Getting started with svyexpo}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+has_inla <- requireNamespace("INLA", quietly = TRUE)
+has_ggplot <- requireNamespace("ggplot2", quietly = TRUE)
+```
+
+This vignette runs the full workflow on simulated data: a 6 x 6 grid of
+areas, 180 clusters displaced as in DHS, and a three-year exposure raster.
+With real data, replace `svy_simulate()` with your survey, GPS file, GADM
+boundaries and exposure rasters.
+
+```{r}
+library(svyexpo)
+sim <- svy_simulate()
+head(sim$survey)
+```
+
+## 1. Ingest
+
+`svy_standardize()` maps your column names to the standard schema. For DHS
+recodes, `svy_from_dhs()` does this in one step from the recode and the GPS
+dataset.
+
+```{r}
+pts <- svy_standardize(
+  sim$survey,
+  id = "id", cluster = "cluster", lon = "lon", lat = "lat",
+  date = "date", weight = "weight", strata = "strata", urban = "urban"
+)
+```
+
+## 2. Boundaries
+
+With real data, download boundaries with `svy_boundaries("GHA", level = 2)`.
+Clusters displaced into the sea or across a border are assigned to the
+nearest area within `max_dist` metres.
+
+```{r}
+pts <- svy_assign_areas(pts, sim$boundaries)
+table(pts$area_match)
+```
+
+## 3. Exposure linkage
+
+Buffers are 2 km for urban and 5 km for rural clusters. Each record gets the
+exposure layer for its interview year. Here we also average the interview
+year and the year before it.
+
+```{r}
+buffers <- svy_buffers(pts)
+expo <- svy_extract_by_year(buffers, sim$raster, window_years = 2,
+                            name = "pm25")
+head(expo)
+```
+
+`raster` can also be a file path or a Cloud-Optimized GeoTIFF URL
+(`"/vsicurl/https://..."`). Only the pixels under the buffers are read, and
+`cache_file` in `svy_extract()` saves the result so the raster is read once.
+
+## 4. Spatial structure
+
+```{r}
+graph <- svy_adjacency(sim$boundaries)
+graph
+```
+
+## 5. Model
+
+```{r, eval = has_inla}
+dat <- merge(sf::st_drop_geometry(pts), expo, by = "id")
+dat$pm25_z <- as.numeric(scale(dat$pm25))
+
+fit <- svy_fit_bym2(
+  dat, y ~ pm25_z + urban + age_months, graph,
+  family = "binomial", svc = "pm25_z"
+)
+fit
+svy_diagnostics(fit)
+```
+
+## 6. Outputs
+
+```{r, eval = has_inla}
+area <- svy_area_effects(fit, exponentiate = TRUE)
+slopes <- svy_svc_effects(fit, "pm25_z", exponentiate = TRUE)
+head(slopes)
+```
+
+```{r, eval = has_inla && has_ggplot, fig.width = 6, fig.height = 4}
+svy_map(slopes, sim$boundaries, fill = "mean",
+        title = "Odds ratio per SD of PM2.5")
+svy_map(slopes, sim$boundaries, fill = "prob_exceed",
+        title = "P(odds ratio > 1)")
+```

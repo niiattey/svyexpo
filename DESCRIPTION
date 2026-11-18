@@ -1,0 +1,42 @@
+Package: svyexpo
+Title: Link Survey Clusters to Raster Exposures and Fit Bayesian Spatial Models
+Version: 0.0.0.9000
+Authors@R:
+    person("Patrick", "Attey-Yeboah", , "your.email@example.com", role = c("aut", "cre"))
+Description: Tools for exposure-outcome analysis of geocoded household
+    surveys such as the Demographic and Health Surveys (DHS) and Multiple
+    Indicator Cluster Surveys (MICS). The package standardises survey
+    records to a common schema, assigns clusters to administrative areas
+    from the Database of Global Administrative Areas (GADM), extracts raster
+    exposures within displacement-aware buffers without loading full rasters
+    into memory, builds spatial adjacency structures, and fits BYM2 models
+    with optional spatially varying coefficients using INLA.
+License: MIT + file LICENSE
+URL: https://github.com/niiattey/svyexpo, https://niiattey.github.io/svyexpo/
+BugReports: https://github.com/niiattey/svyexpo/issues
+Depends:
+    R (>= 4.1.0)
+Imports:
+    cli,
+    exactextractr (>= 0.9.0),
+    geodata,
+    Matrix,
+    sf (>= 1.0.0),
+    spdep,
+    stats,
+    terra (>= 1.7.0),
+    utils
+Suggests:
+    arrow,
+    ggplot2,
+    INLA,
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0),
+    withr
+Additional_repositories: https://inla.r-inla-download.org/R/stable
+VignetteBuilder: knitr
+Config/testthat/edition: 3
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.3.1

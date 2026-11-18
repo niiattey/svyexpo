@@ -1,0 +1,18 @@
+url: https://niiattey.github.io/svyexpo/
+template:
+  bootstrap: 5
+reference:
+  - title: "1. Ingest"
+    contents: [svy_standardize, svy_from_dhs, cmc_to_date, svy_schema]
+  - title: "2. Boundaries"
+    contents: [svy_boundaries, svy_assign_areas]
+  - title: "3. Exposure linkage"
+    contents: [svy_buffers, svy_extract, svy_extract_by_year]
+  - title: "4. Spatial structure"
+    contents: [svy_adjacency]
+  - title: "5. Models"
+    contents: [svy_fit_bym2, svy_priors]
+  - title: "6. Outputs"
+    contents: [svy_area_effects, svy_svc_effects, svy_diagnostics, svy_map]
+  - title: "Simulated data"
+    contents: [svy_simulate]
