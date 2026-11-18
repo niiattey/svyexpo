@@ -79,3 +79,15 @@ apply for access to real data at <https://dhsprogram.com>.
 ## Status
 
 Experimental. Interfaces may change before version 0.1.0.
+
+## Author
+
+Patrick Attey-Yeboah, Department of Biomedical Sciences, University of
+Cape Coast, Ghana.
+[Portfolio](https://niiattey.github.io/personal_page/) ·
+[GitHub](https://github.com/niiattey) · <niiatteyyeboah@gmail.com>
+
+## Citation
+
+If you use svyexpo in your work, please cite it with
+`citation("svyexpo")` once a release and DOI are available.
