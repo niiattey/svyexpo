@@ -2,7 +2,7 @@ Package: svyexpo
 Title: Link Survey Clusters to Raster Exposures and Fit Bayesian Spatial Models
 Version: 0.0.0.9000
 Authors@R:
-    person("Patrick", "Attey-Yeboah", , "your.email@example.com", role = c("aut", "cre"))
+    person("Patrick", "Attey-Yeboah", , "niiatteyyeboah@gmail.com", role = c("aut", "cre"))
 Description: Tools for exposure-outcome analysis of geocoded household
     surveys such as the Demographic and Health Surveys (DHS) and Multiple
     Indicator Cluster Surveys (MICS). The package standardises survey
