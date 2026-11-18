@@ -1,5 +1,5 @@
-# Runs R CMD check on push and pull request. INLA is installed from its own
-# repository on Linux so the model tests run there; elsewhere they are skipped.
+# Runs R CMD check on push and pull request. INLA comes from its own
+# repository (extra-repositories) so the model tests run where it installs.
 on:
   push:
     branches: [main, master]
@@ -17,9 +17,9 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: ubuntu-latest, r: 'release', inla: true}
-          - {os: windows-latest, r: 'release', inla: false}
-          - {os: macos-latest, r: 'release', inla: false}
+          - {os: ubuntu-latest, r: 'release'}
+          - {os: windows-latest, r: 'release'}
+          - {os: macos-latest, r: 'release'}
     env:
       GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
       R_KEEP_PKG_SOURCE: yes
@@ -31,17 +31,11 @@ jobs:
         with:
           r-version: ${{ matrix.config.r }}
           use-public-rspm: true
+          extra-repositories: https://inla.r-inla-download.org/R/stable
       - uses: r-lib/actions/setup-r-dependencies@v2
         with:
           extra-packages: any::rcmdcheck
           needs: check
-      - name: Install INLA
-        if: matrix.config.inla
-        run: |
-          install.packages("INLA",
-            repos = c(INLA = "https://inla.r-inla-download.org/R/stable",
-                      CRAN = "https://cloud.r-project.org"))
-        shell: Rscript {0}
       - uses: r-lib/actions/check-r-package@v2
         with:
           upload-snapshots: true
