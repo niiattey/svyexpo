@@ -17,7 +17,24 @@ test_that("diagnose INLA under check", {
     }, error = function(e) paste("FAIL:", substr(conditionMessage(e), 1, 80)))
     paste0(label, " = ", r)
   }
-  res <- c(
+  verbose_out <- tryCatch({
+    out <- utils::capture.output(
+      svy_fit_bym2(dat, y ~ pm25_z + urban, graph, verbose = TRUE,
+                   num.threads = "1:1"),
+      type = "output"
+    )
+    c("VERBOSE (no error)", utils::tail(out, 25))
+  }, error = function(e) {
+    c("VERBOSE err", substr(conditionMessage(e), 1, 300))
+  })
+  # does the raw binary run inside this environment?
+  bin <- tryCatch(INLA::inla.getOption("inla.call"), error = function(e) "?")
+  bin_run <- tryCatch(
+    utils::capture.output(system2(bin, "-h", stdout = TRUE, stderr = TRUE))[1:2],
+    error = function(e) conditionMessage(e)
+  )
+  mc <- paste("mc.cores", getOption("mc.cores", "unset"))
+  res <- c(mc, paste("bin", bin), paste("bin -h:", bin_run), verbose_out,
     paste("ver", as.character(utils::packageVersion("INLA"))),
     paste("OMP_THREAD_LIMIT", Sys.getenv("OMP_THREAD_LIMIT", "unset")),
     paste("LIMIT_CORES", Sys.getenv("_R_CHECK_LIMIT_CORES_", "unset")),
